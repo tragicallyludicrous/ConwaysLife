@@ -23,10 +23,10 @@ def next_board_state(grid):
 			cell = grid[y][x]
 			if cell == 1:
 #	Any live cell with 0 or 1 live neighbors becomes dead, because of underpopulation
-				if n == (1 or 0):
+				if n == 1 or n == 0:
 					next_grid[y][x] = 0
 #	Any live cell with more than 3 live neighbors becomes dead, because of overpopulation
-				elif n == (2 or 3):
+				elif 1 < n < 4:
 					next_grid[y][x] = 1
 #	Any live cell with 2 or 3 live neighbors stays alive, because its neighborhood is just right
 				elif n > 3:
@@ -37,8 +37,20 @@ def next_board_state(grid):
 					next_grid[y][x] = 1
 	return next_grid
 
-
 def count_neighbors(grid, y, x):
+	h = len(grid)		# number of rows
+	w = len(grid[0])	# number of columns
+	total = 0
+	for dy in (-1, 0, 1):
+		for dx in (-1, 0 ,1):
+			if dy == 0 and dx == 0:
+				continue	#skip the cell itself
+			ny, nx = y + dy, x + dx
+			if 0 <= ny < h and 0 <= nx < w:
+				total += grid[ny][nx]
+	return total
+
+def count_neighbors_wrap(grid, y, x):
 	h = len(grid)		# number of rows
 	w = len(grid[0])	# number of columns
 	total = 0
@@ -67,6 +79,14 @@ def render(initial_state):
 		print()
 	print(border_top_bottom + (border_top_bottom * stretch * width) + border_top_bottom)
 
+def load_board_state(filename):
+	two_d_list = []
+	with open(filename, 'r') as file:
+		for line in file:
+			two_d_list.append(list(map(int, line.strip())))
+
+	return two_d_list
+
 
 width = 50 # int(input("Width?"))
 height = 40 # int(input("Height?"))
@@ -80,11 +100,11 @@ dead_board_state = dead_state(width, height)
 initial_state = random_board_state
 state2 = next_board_state(initial_state)
 state3 = next_board_state(state2)
-state = [
+grid = [
     [0,0,0,0,0],
-    [0,0,1,0,0],
-    [0,0,1,0,0],
-    [0,0,1,0,0],
+    [0,0,1,1,0],
+    [0,0,1,1,0],
+    [0,0,0,0,0],
     [0,0,0,0,0],
 ]
 # Middle cell at (1,1) should see 4 neighbors.
@@ -96,11 +116,15 @@ state = [
 # render(initial_state)
 # render(next_board_state(initial_state))
 # render(next_board_state(next_board_state(initial_state)))
+import_file = input("Import filename?")
+import_file_contents = open(import_file, 'r').read()
+width = len(import_file_contents.split('\n')[0])
+height = len(import_file_contents.splitlines())
 
-
+initial_state = load_board_state(import_file)
 state = initial_state
 while True:
 	render(state)
 	new_state = next_board_state(state)
 	state = new_state
-	time.sleep(.25)
+	time.sleep(0.1)
