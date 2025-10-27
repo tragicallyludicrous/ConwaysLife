@@ -1,4 +1,4 @@
-import random
+import random, time
 
 
 
@@ -12,25 +12,6 @@ def random_state(width, height):
 	random_board_state = [[random.randint(0,1) for w in range(width)] for h in range(height)]
 	return random_board_state
 
-
-# def next_board_state(initial_state):
-# #	Any live cell with 0 or 1 live neighbors becomes dead, because of underpopulation
-# 	for y in initial_state:
-# 		for x in y:
-# 			if initial_state[x] == 1:
-# 				if 0 <=	count_neighbors(initial_state, x, y) <= 1:
-# 					next_state[x] = 0
-# 
-# 				elif 2 <= count_neighbors(initial_state, x, y) <= 3:
-# 					next_state[x] = 1
-# #	Any live cell with more than 3 live neighbors becomes dead, because of overpopulation
-# 				elif 3 < count_neighbors(initial_state, x, y):
-# 					next_state[x] = 0
-
-# 			elif initial_state[x] == 0:
-# 				if 3 == count_neighbors(initial_state, x, y):
-# 					next_state[x] = 1
-# 	return next_state
 
 def next_board_state(grid):
 	h = len(grid)
@@ -56,6 +37,7 @@ def next_board_state(grid):
 					next_grid[y][x] = 1
 	return next_grid
 
+
 def count_neighbors(grid, y, x):
 	h = len(grid)		# number of rows
 	w = len(grid[0])	# number of columns
@@ -70,16 +52,10 @@ def count_neighbors(grid, y, x):
 	return total
 
 
-# def neighbor_sum(initial_state):
-# 	for y in initial_state:
-# 		for x in y:
-# 			return sum([x - 1] + [x + 1] + [x - 1][y - 1] + [x][y - 1] + [x + 1][y - 1] + [x - 1][y + 1] + [x][y + 1] + [x + 1][y + 1])
-
-
 def render(initial_state):
-	print("\u2588"+("\u2588" * stretch * width)+"\u2588")
+	print(border_top_bottom + (border_top_bottom * stretch * width) + border_top_bottom)
 	for row in initial_state:
-		print("\u2588", end = "")
+		print(border_wall, end = "")
 		for element in row:
 			if element == 1:
 				print(alive_cell, end = "")
@@ -87,28 +63,29 @@ def render(initial_state):
 				print(dead_cell, end = "")
 			else:
 				print("ugh")
-		print("\u2588", end = "")
+		print(border_wall, end = "")
 		print()
-	print("\u2588"+("\u2588" * stretch * width)+"\u2588")
+	print(border_top_bottom + (border_top_bottom * stretch * width) + border_top_bottom)
 
 
-
-
-
-width = 10 # int(input("Width?"))
-height = 10 # int(input("Height?"))
+width = 50 # int(input("Width?"))
+height = 40 # int(input("Height?"))
 stretch = 3
-alive_cell = " \u25AF "
-dead_cell = " \u2800 "
+alive_cell = "\u2588" * stretch
+dead_cell = "\u2800" * stretch
+border_top_bottom = "-"
+border_wall = "|"
 random_board_state = random_state(width, height)
 dead_board_state = dead_state(width, height)
 initial_state = random_board_state
 state2 = next_board_state(initial_state)
 state3 = next_board_state(state2)
-grid = [
-	[0,0,0],
-	[1,0,1],
-	[0,1,0]
+state = [
+    [0,0,0,0,0],
+    [0,0,1,0,0],
+    [0,0,1,0,0],
+    [0,0,1,0,0],
+    [0,0,0,0,0],
 ]
 # Middle cell at (1,1) should see 4 neighbors.
 # Top-middle at (0,1) has below at (1,1) and diagonals, etc.
@@ -116,12 +93,14 @@ grid = [
 # x = int(input("x coord?")) - 1
 # y = int(input("y coord?")) - 1
 
+# render(initial_state)
+# render(next_board_state(initial_state))
+# render(next_board_state(next_board_state(initial_state)))
 
 
-
-
-
-
-render(random_board_state)
-render(state2)
-render(state3)
+state = initial_state
+while True:
+	render(state)
+	new_state = next_board_state(state)
+	state = new_state
+	time.sleep(.25)
