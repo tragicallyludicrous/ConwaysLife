@@ -1,16 +1,18 @@
-import random, time, os
+import random, time
+
+ALIVE, DEAD = 1, 0
 
 
 # random_state function takes in width and height and returns a state in which every cell is either ALIVE (1) or DEAD (0)
 def random_state(width, height, alive_prob = 0.5, seed = None):
     """Generate a random game state of 0s and 1s.
     alive_prob is the chance of a cell being alive (default 0.5)."""
-    if seed is not None:
-        random.seed(seed)
-    return [[1 if random.random() < alive_prob else 0 for _ in range(width)] for _ in range(height)]
-
-
-ALIVE, DEAD = 1, 0
+    state = []
+    for _ in range(height):
+        state.append([])
+        for _ in range(width):
+            state[-1].append(1 if random.random() < alive_prob else 0)
+    return state
 
 def next_board_state(grid):
     """Compute next generation from a 2D 0/1 grid using Conway's rules."""
