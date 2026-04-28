@@ -28,7 +28,7 @@ def next_board_grid(grid):
 
     for y in range(h):
         for x in range(w):
-            n = count_neighbors_wrap(grid, y, x)
+            n = vn_count_neighbors(grid, y, x)
             cell = grid[y][x]
             if cell == ALIVE:
                 # This is one of Conway's rules - if a cell has 2 or 3 neighbors it survives
@@ -60,50 +60,42 @@ def count_neighbors(grid, y, x):
                 total += grid[ny][nx]
     return total
 
-# Count neighbors with the Von Neumann cross method (no wrap)
+# Count neighbors with the Von Neumann diamond method (no wrap)
 def vn_count_neighbors(grid, y, x):
     h = len(grid)       # number of rows
     w = len(grid[0])    # number of columns
     total = 0
-    for dy in range(-2,2):
-        for dx in range(-2,2):
+    for dy in range(-2,3):
+        for dx in range(-2,3):
             if dy == 0 and dx == 0:
                 continue    #skip the cell itself
             # ny, nx (neighbors y and x)
             ny, nx = y + dy, x + dx
-            if abs(dx) == 2:
-                if abs(dy):
-                    continue
-            if abs(dx) == 1:
-                if abs(dy) > 1:
-                    continue
+
             # if the neighbor is off the grid, ignore it
-            if 0 <= ny < h and 0 <= nx < w:
-                total += grid[ny][nx]
+            if abs(dx) + abs(dy) <= 2:
+                if 0 <= ny < h and 0 <= nx < w:
+                    total += grid[ny][nx]
+
     return total
 
 
-# Count neighbors with the Von Neumann cross method (no wrap)
+# Count neighbors with the Von Neumann diamond method (no wrap)
 def vn_count_neighbors_wrap(grid, y, x):
     h = len(grid)       # number of rows
     w = len(grid[0])    # number of columns
     total = 0
-    for dy in range(-2,2):
-        for dx in range(-2,2):
+    for dy in range(-2,3):
+        for dx in range(-2,3):
             if dy == 0 and dx == 0:
                 continue    #skip the cell itself
             # ny, nx (neighbors y and x)
             ny = (y + dy) % h
             nx = (x + dx) % w
-            if abs(dx) == 2:
-                if abs(dy):
-                    continue
-            if abs(dx) == 1:
-                if abs(dy) > 1:
-                    continue
             # if the neighbor is off the grid, ignore it
-            if 0 <= ny < h and 0 <= nx < w:
-                total += grid[ny][nx]
+            if abs(dx) + abs(dy) <= 2:
+                if 0 <= ny < h and 0 <= nx < w:
+                    total += grid[ny][nx]
     return total
 
 
